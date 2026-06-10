@@ -2,6 +2,8 @@ import keras
 from keras.datasets import mnist
 from keras.models import Sequential  #We can add how much ever layers we want
 from keras.layers import Conv2D, MaxPooling2D, Dense, Dropout, Flatten
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 pixel_width = 28
 pixel_height = 28
@@ -31,12 +33,33 @@ model.add(Conv2D(32, kernel_size=(3,3), activation='relu', input_shape=input_sha
 print("Post Conv2D: ", model.output_shape)
 #Here we will find 32 key features of the image that says it is that, so 32 filter layers
 #kernal size how big of a grid should be on the image 
-#RELU = Rectified linear unit
+#RELU = Rectified linear unit to make sure there are no negative values
 
 model.add(MaxPooling2D(pool_size=(2,2)))
 print("Post MaxPooling ", model.output_shape)
+#Here we keep the most important pieces
 
 #To avoide overfitting we use a Dropout layer
 #It is going to randamize our data according to the percentage that we set
 model.add(Dropout(0.25))
 print("Post Dropout: ", model.output_shape)
+#We are not losing data, we are just performing convolusion
+
+#Flatten
+model.add(Flatten())
+print("Post Flatter: ", model.output_shape)  #Now this is a single stack of 5408 nodes
+
+#Now we connect all of these nodes to the next layer of nodes then add and divide there percentage
+model.add(Dense(128, activation='relu'))  #Dense makes a fully connected layer
+#128 nodes
+print("Post Dense: ", model.output_shape)
+
+#Now we pass to another fully connected layed and that is the output layer so we are going to use softmax activation
+model.add(Dense(num_of_classes, activation='softmax'))
+print("Post Dense 2: ", model.output_shape)
+
+#Compiling of the model
+model.compile(loss='keras.losses.categorical_crossentropy', 
+              optimizer='keras.optimizers.Adadelta()',
+              metrics=['accuracy'])
+#keras.losses.categorical_crossentropy this categorieses the accurcy between the test and training data 
