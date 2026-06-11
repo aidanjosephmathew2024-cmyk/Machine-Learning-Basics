@@ -8,6 +8,8 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 pixel_width = 28
 pixel_height = 28
 num_of_classes = 10
+batch_size = 32
+
 
 (features_train, labels_train), (features_test, labels_test) = mnist.load_data()
 
@@ -36,30 +38,39 @@ print("Post Conv2D: ", model.output_shape)
 #RELU = Rectified linear unit to make sure there are no negative values
 
 model.add(MaxPooling2D(pool_size=(2,2)))
-print("Post MaxPooling ", model.output_shape)
+#print("Post MaxPooling ", model.output_shape)
 #Here we keep the most important pieces
 
 #To avoide overfitting we use a Dropout layer
 #It is going to randamize our data according to the percentage that we set
 model.add(Dropout(0.25))
-print("Post Dropout: ", model.output_shape)
+#print("Post Dropout: ", model.output_shape)
 #We are not losing data, we are just performing convolusion
 
 #Flatten
 model.add(Flatten())
-print("Post Flatter: ", model.output_shape)  #Now this is a single stack of 5408 nodes
+ #Now this is a single stack of 5408 nodes
 
 #Now we connect all of these nodes to the next layer of nodes then add and divide there percentage
 model.add(Dense(128, activation='relu'))  #Dense makes a fully connected layer
 #128 nodes
-print("Post Dense: ", model.output_shape)
 
 #Now we pass to another fully connected layed and that is the output layer so we are going to use softmax activation
 model.add(Dense(num_of_classes, activation='softmax'))
-print("Post Dense 2: ", model.output_shape)
 
 #Compiling of the model
-model.compile(loss='keras.losses.categorical_crossentropy', 
-              optimizer='keras.optimizers.Adadelta()',
+model.compile(loss='categorical_crossentropy', 
+              optimizer='adadelta',
               metrics=['accuracy'])
 #keras.losses.categorical_crossentropy this categorieses the accurcy between the test and training data 
+
+model.fit(features_train, labels_train,
+          batch_size= batch_size, 
+          epochs=10,
+          verbose=1,
+          validation_data=(features_test, labels_test))
+
+score = model.evaluate(features_test, labels_test, verbose=0)
+
+model.save(r'D:\Machine-Learning-Basics.keras') #.keras is how a keras file should be saved as\
+
