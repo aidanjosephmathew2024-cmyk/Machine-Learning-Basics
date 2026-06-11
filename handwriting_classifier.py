@@ -74,3 +74,18 @@ score = model.evaluate(features_test, labels_test, verbose=0)
 
 model.save(r'D:\Machine-Learning-Basics.keras') #.keras is how a keras file should be saved as\
 
+
+import coremltools
+coreml_model = coremltools.converters.keras.convert(model, input_names=['image'], image_input_names='image')
+
+coreml_model.author = 'Devslopes, LLC.'
+coreml_model.license = 'MIT'
+coreml_model.short_description = 'Predicts the handwritten characters passes in as a number between 1-9.'
+coreml_model.input_description['image'] = 'A 28x28 pixel grayscale image.'
+coreml_model.output_description['output1'] = 'A Multiarray where the index with the greatest float value (0-1) is the recognized digit.'
+
+coreml_model.save(r'D:\Machine-Learning-Basics.mlmodel')
+
+
+
+
