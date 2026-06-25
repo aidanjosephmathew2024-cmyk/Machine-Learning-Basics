@@ -14,6 +14,11 @@ This repository contains machine learning projects developed using Python.
 - Used image preprocessing and classification techniques
 - Evaluated model performance on test data
 
+### Student Performance Prediction (Random Forest)
+- Built a classifier to predict student academic performance
+- Achieved 99.33% test accuracy
+- Used Random Forest with Scikit-learn
+
 ## Technologies
 - Python
 - NumPy
